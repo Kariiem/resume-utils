@@ -7,9 +7,13 @@
   (file-name-directory (or load-file-name buffer-file-name))
   "Directory containing the template, compiler wrapper and resume.org.")
 
-(defun resume-tex--read-template ()
+(defun resume-tex--read-template (&optional info)
   (with-temp-buffer
-    (insert-file-contents (expand-file-name "resume-template.tex" resume-tex-directory))
+    (insert-file-contents
+     (if-let* ((template (plist-get info :resume-template)))
+         (expand-file-name template
+                           (file-name-directory (plist-get info :input-file)))
+       (expand-file-name "resume-template.tex" resume-tex-directory)))
     (buffer-string)))
 
 (defun resume-tex--text (value info)
@@ -19,22 +23,25 @@
 
 (defun resume-tex--header (info)
   (let ((text (lambda (key) (resume-tex--text (plist-get info key) info))))
-    (format
-     (concat "\\begin{center}\n{\\Huge \\scshape %s}"
-             "\\\\ \\vspace{1pt} %s\\\\ \\vspace{1pt} \\small\n"
-             "\\href{tel:%s}{\\raisebox{-0.1\\height}\\faPhone\\underline{%s}~}\n"
-             "\\href{mailto:%s}{\\raisebox{-0.2\\height}\\faEnvelope\\underline{%s}~}\n"
-             "\\href{%s}{\\raisebox{-0.2\\height}\\faLinkedinSquare\\underline{%s}~}\n"
-             "\\href{%s}{\\raisebox{-0.2\\height}\\faGithub\\underline{%s}~}\n"
-             "\\vspace{-8pt}\n\\end{center}\n")
-     (funcall text :resume-name) (funcall text :resume-location)
-     (plist-get info :resume-phone-uri) (funcall text :resume-phone)
-     (plist-get info :resume-email) (funcall text :resume-email)
-     (plist-get info :resume-linkedin) (funcall text :resume-name)
-     (plist-get info :resume-github) (funcall text :resume-github-label))))
+    (concat
+     "\\begin{center}\n{\\Huge \\scshape " (funcall text :resume-name) "}"
+     (when (plist-get info :resume-location)
+       (concat "\\\\ \\vspace{1pt} " (funcall text :resume-location)))
+     "\\\\ \\vspace{1pt} \\small\n"
+     (mapconcat
+      (lambda (contact)
+        (pcase-let ((`(,key ,label ,prefix ,icon ,raise) contact))
+          (when-let* ((url (plist-get info key)))
+            (format "\\href{%s%s}{\\raisebox{%s\\height}\\%s\\underline{%s}~}\n"
+                    prefix url raise icon (funcall text label)))))
+      '((:resume-phone-uri :resume-phone "tel:" "faPhone" "-0.1")
+        (:resume-email :resume-email "mailto:" "faEnvelope" "-0.2")
+        (:resume-linkedin :resume-name "" "faLinkedinSquare" "-0.2")
+        (:resume-github :resume-github-label "" "faGithub" "-0.2")) "")
+     "\\vspace{-8pt}\n\\end{center}\n")))
 
 (defun resume-tex-template (contents info)
-  (let ((template (resume-tex--read-template)))
+  (let ((template (resume-tex--read-template info)))
     (setq template (string-replace "@@RESUME-HEADER@@" (resume-tex--header info) template))
     (string-replace "@@RESUME-BODY@@" contents template)))
 
@@ -85,7 +92,8 @@
 
 (org-export-define-derived-backend 'resume 'latex
   :options-alist
-  '((:resume-name "RESUME_NAME" nil nil t)
+  '((:resume-template "RESUME_TEMPLATE" nil nil t)
+    (:resume-name "RESUME_NAME" nil nil t)
     (:resume-location "RESUME_LOCATION" nil nil t)
     (:resume-phone "RESUME_PHONE" nil nil t)
     (:resume-phone-uri "RESUME_PHONE_URI" nil nil t)
@@ -123,18 +131,35 @@
 (add-hook 'LaTeX-mode-hook #'resume-tex--setup)
 (add-hook 'latex-mode-hook #'resume-tex--setup)
 
+(define-minor-mode resume-export-mode
+  "Buffer-local CV export bindings; enable from an Org file's local variables.
+Only Org files inside `resume-tex-directory' may enable this mode.
+Use C-c r to export this file to its sibling PDF through Docker."
+  :lighter " Resume"
+  :keymap (let ((map (make-sparse-keymap)))
+            (define-key map (kbd "C-c r") #'resume-export-pdf)
+            map)
+  (when resume-export-mode
+    (unless (and (derived-mode-p 'org-mode) buffer-file-name
+                 (file-in-directory-p buffer-file-name resume-tex-directory))
+      (setq resume-export-mode nil)
+      (user-error "Resume export mode requires an Org file inside %s"
+                  resume-tex-directory))
+    (resume-tex--setup)))
+
 (defun resume-export-tex (&optional _async _subtreep _visible-only _body-only _ext-plist)
-  "Export the current Org resume, or resume.org in batch mode, to resume.tex."
+  "Export the current Org file to sibling TeX; default to resume.org in batch."
   (interactive)
   (unless (derived-mode-p 'org-mode)
     (find-file (expand-file-name "resume.org" resume-tex-directory)))
   (resume-tex--setup)
   ;; Resume export never needs to evaluate source blocks on the host.
   (let ((org-export-use-babel nil))
-    (org-export-to-file 'resume (expand-file-name "resume.tex" resume-tex-directory))))
+    (org-export-to-file 'resume (concat (file-name-sans-extension buffer-file-name)
+                                       ".tex"))))
 
 (defun resume-export-pdf (&optional _async _subtreep _visible-only _body-only _ext-plist)
-  "Export to resume.tex and compile resume.pdf in the Docker sandbox."
+  "Export this Org file to sibling TeX and PDF in the Docker sandbox."
   (interactive)
   (org-latex-compile (resume-export-tex)))
 

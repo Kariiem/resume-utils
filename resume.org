@@ -178,5 +178,6 @@
 
 # Local Variables:
 # eval: (load (expand-file-name "./resume-tex-config.el" (file-name-directory (buffer-file-name))))
-# eval: (org-tidy-mode -1)
+# eval: (when (fboundp 'org-tidy-mode) (org-tidy-mode -1))
+# eval: (resume-export-mode 1)
 # End:

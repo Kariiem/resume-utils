@@ -29,6 +29,8 @@ emacs -Q --batch -l ./resume-tex-config.el -f resume-export-tex
 ```
 
 To compile an already exported TeX file: `./bin/resume-tex resume.tex`.
+The wrapper also accepts paths inside the project, such as
+`./bin/resume-tex other/example.tex`, and compiles in that file's directory.
 This runs XeLaTeX twice and stops on errors. Emacs reports compilation output
 in `*Org PDF LaTeX Output*`; running the wrapper directly retains the `.log`.
 Org normally removes intermediate files following a successful compilation.
@@ -57,6 +59,39 @@ Before configuring this project, the existing `~/.emacs.d/lisp/init-org.el`,
 `init-tex.el`, and package selections were inspected: Org, `org-tidy`, AUCTeX,
 and `pdf-tools` are already in use. No changes to your personal Emacs config
 were made and no new Emacs packages are required.
+
+## Private family CVs and the export minor mode
+
+`other/` is ignored by Git, including its Org sources, templates, fonts,
+original inputs under `other/reference/`, and generated TeX/PDF outputs.
+Do not force-add it: ignore rules are not encryption or access control.
+
+Each CV exports beside its Org file: `other/example.org` becomes
+`other/example.tex` and `other/example.pdf`, without overwriting `resume.pdf`.
+The moved original inputs were also preserved under `other/reference/` before
+export, so regenerated files do not destroy the source documents.
+
+`resume-export-mode` is **buffer-local and opt-in**. Its **`C-c r`** binding
+exports the current CV to PDF. It can only be enabled in Org file buffers
+inside this project; it is not automatically enabled by an Org hook. The
+included files enable it through their footer's local variables. When Emacs
+asks, review and approve these local evaluations for your trusted CV files:
+
+```org
+# Local Variables:
+# eval: (load (expand-file-name "../resume-tex-config.el" (file-name-directory (buffer-file-name))))
+# eval: (resume-export-mode 1)
+# End:
+```
+
+Use `./resume-tex-config.el` rather than `../resume-tex-config.el` for Org files
+at the project root. Reopen the file or run `M-x normal-mode` to apply a changed
+footer. Disabling `M-x resume-export-mode` removes the binding from that buffer.
+
+Optional contact keywords may be omitted; no empty contact links are generated.
+`#+RESUME_TEMPLATE: example-template.tex` selects a trusted template relative
+to the Org file; the shared template remains the default. Template files use
+`@@RESUME-HEADER@@` and `@@RESUME-BODY@@` substitution markers.
 
 ## Content model
 

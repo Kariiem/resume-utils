@@ -1,4 +1,6 @@
 /fontawesome/
+# Private family CVs and all their sources, fonts and generated files.
+/other/
 # TeX intermediates (resume.tex and resume.pdf are intentional tracked outputs).
 *.aux
 *.log
