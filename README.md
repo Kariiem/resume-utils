@@ -4,6 +4,13 @@ Edit **`resume.org`** for content and **`resume-template.tex`** for presentation
 Native Emacs exports `resume.tex`; Docker compiles `resume.pdf`. Neither Emacs
 nor Font Awesome is installed in the image. No host TeX installation is needed.
 
+## License
+
+Original contributions to this project are dedicated to the public domain under
+[the Unlicense](LICENSE). Third-party materials, including Font Awesome and any
+upstream template material, remain subject to their respective licenses; this
+dedication does not override those terms.
+
 ## Build and export
 
 Requirements: native Emacs with Org (tested with `emacs -Q`), Docker, and the
