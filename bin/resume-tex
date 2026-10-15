@@ -1,0 +1,16 @@
+#!/bin/sh
+# Native Emacs calls this script; only the TeX engine runs in Docker.
+set -eu
+root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+fonts=${RESUME_FONTAWESOME_DIR:-$root/fontawesome}
+file=${1:-resume.tex}
+case "$file" in
+  */*|-*) echo 'Pass a .tex basename in the project root, not a path or option' >&2; exit 2 ;;
+esac
+[ -d "$fonts/otfs" ] || { echo "Missing Font Awesome directory: $fonts/otfs" >&2; exit 1; }
+exec docker run --rm --network=none --read-only --cap-drop=ALL \
+  --security-opt=no-new-privileges --pids-limit=128 --memory=1g --cpus=2 \
+  --user "$(id -u):$(id -g)" --tmpfs /tmp:rw,nosuid,nodev,size=256m \
+  --mount "type=bind,source=$root,target=/work" \
+  --mount "type=bind,source=$fonts,target=/fontawesome,readonly" \
+  "${RESUME_TEX_IMAGE:-resume-tex:local}" "$file"
