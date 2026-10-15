@@ -24,8 +24,6 @@
 * EXPERIENCE
 :PROPERTIES:
 :TYPE: section
-:SPACE_BEFORE: -5pt
-:SPACE_AFTER: 16pt
 :END:
 
 ** Backend Engineer (Elixir / OTP, CQRS/ES)
@@ -33,7 +31,7 @@
 :TYPE: experience
 :DATE: August 2025 - Present
 :ORGANIZATION: Sonnen
-:SPACE_AFTER: 15pt
+:SPACE_AFTER: 5pt
 :END:
 - Designed and extended CQRS/Event-Sourcing workflows using Commanded:
   introduced new commands/events and updated projectors and process managers to
@@ -56,7 +54,7 @@
 :DATE: June 2024 - Nov 2024
 :ORGANIZATION: Haskell.org (GSoC 2024)
 :URL: https://summerofcode.withgoogle.com/archive/2024/projects/3tNBjwL4
-:SPACE_AFTER: 15pt
+:SPACE_AFTER: 5pt
 :END:
 - GHC (Glasgow Haskell Compiler) is a state-of-the-art Haskell compiler, it's divided into several stages: parser, renamer, typechecker, desugarer and code gen.
 - GHC's parser is not fault-tolerant, so any parsing error causes the whole compilation pipeline to fail, this affects the programming experience, since it leads to longer modify-compile-correct cycles.
@@ -72,7 +70,7 @@
 :DATE: June 2023 - Sept 2023
 :ORGANIZATION: QEMU.org (GSoC 2023)
 :URL: https://summerofcode.withgoogle.com/programs/2023/projects/nPd0n4mh
-:SPACE_AFTER: -13pt
+:SPACE_AFTER: 5pt
 :END:
 - FreeBSD User is the name of the QEMU submodule for FreeBSD OS.
 - To improve the Armv7 emulation, a set of syscalls needed to be implemented in FreeBSD User.
@@ -83,26 +81,14 @@
 * PROJECTS
 :PROPERTIES:
 :TYPE: section
-:SPACE_BEFORE: -5pt
-:SPACE_AFTER: 16pt
+:SPACE_AFTER: 5pt
 :END:
-** COMMENT Botiverse
-:PROPERTIES:
-:TYPE: project
-:DATE: July 2023
-:URL: https://github.com/TheBotiverse/Botiverse
-:SPACE_AFTER: -13pt
-:END:
-- An open source python package for building chatbots.
-- Implemented and tested the Theorizer submodule, a question-generation model.
-- Used special preprocessing for extracting new features besides the question and the answer, namely the clue and the style.
-
 ** Lang
 :PROPERTIES:
 :TYPE: project
 :DATE: May 2023
 :URL: https://github.com/Kariiem/Compiler
-:SPACE_AFTER: -13pt
+:SPACE_AFTER: 5pt
 :END:
 - A compiler for a statically typed, expression based programming language, written in C.
 - The implementation follows the literature standards, by dividing the compiler into a front-end and a back-end.
@@ -114,7 +100,7 @@
 :TYPE: project
 :DATE: June 2022
 :URL: https://github.com/Kariiem/RSA-Algorithm
-:SPACE_AFTER: -13pt
+:SPACE_AFTER: 5pt
 :END:
 - Simple implementation of RSA algorithm in Haskell packaged as a cabal library.
 - Used the sockets api for communication between sender and receiver.
@@ -125,30 +111,19 @@
 :TYPE: project
 :DATE: Jan 2022
 :URL: https://github.com/EssamWisam/Pipelined-AMD-Ryzen-9
-:SPACE_AFTER: -13pt
+:SPACE_AFTER: 5pt
 :END:
 - A Harvard-architecture 5-stage pipelined processor, implemented in VHDL using Intel's ModelSim.
 - The processor has a RISC-like instruction set architecture, with 8 word-sized general-purpose registers:R0-R7 and some special purpose registers: program counter(PC) And stack pointer(SP).
 - The memory address space is 1 MB of 16-bit width and is word addressable. The data bus is 32 bits.
 
-** COMMENT SE-Project-CMP-Tumbler
-:PROPERTIES:
-:TYPE: project
-:DATE: Jan 2022
-:URL: https://github.com/SE-Project-CMP-Tumbler/SE-Project-CMP-Testing
-:SPACE_AFTER: -13pt
-:END:
-- Testing environment for a tumbler clone.
-- Web app was tested using cypress.
-- Native Android app was tested using Appium Java.
-- Flutter Android app was tested using Appium-flutter.
 
 ** Search engine
 :PROPERTIES:
 :TYPE: project
 :DATE: June 2021
 :URL: https://github.com/Kariiem/7oksha.com
-:SPACE_AFTER: -13pt
+:SPACE_AFTER: 5pt
 :END:
 - Search engine in Java, using Java's multi-threading facilities, namely thread pools.
 - The Search engine is divided into two parts the web crawler and the indexer.
@@ -158,7 +133,7 @@
 * TECHNICAL SKILLS
 :PROPERTIES:
 :TYPE: skills
-:SPACE_AFTER: -15pt
+:SPACE_AFTER: 5pt
 :END:
 ** Languages
 :PROPERTIES:

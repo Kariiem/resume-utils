@@ -137,7 +137,6 @@
 \resumeSubheading{Cairo University Faculty of Engineering}{August 2018 -- July 2023}{BSc. Computer Engineering, Grade: Excellent}{Cairo, Egypt}
 \resumeSubHeadingListEnd
 \section{EXPERIENCE}
-\vspace{-5pt}
 \resumeSubHeadingListStart
 \resumeExperienceHeading{{\textbf{\large{Backend Engineer (Elixir / OTP, CQRS/ES)}}}}{August 2025 - Present}{Sonnen}
 \resumeItemListStart
@@ -156,7 +155,7 @@ and PubSub processes.}
 producer/consumer behaviours and blocked-connection handling via
 Phoenix.PubSub state broadcasting.}
 \resumeItemListEnd
-\vspace{15pt}
+\vspace{5pt}
 \resumeExperienceHeading{{\textbf{\large{Parse error recovery and incrementality for GHC}}}\href{https://summerofcode.withgoogle.com/archive/2024/projects/3tNBjwL4}{\raisebox{-0.1\height}\faExternalLink}}{June 2024 - Nov 2024}{Haskell.org (GSoC 2024)}
 \resumeItemListStart
 \resumeItem{GHC (Glasgow Haskell Compiler) is a state-of-the-art Haskell compiler, it's divided into several stages: parser, renamer, typechecker, desugarer and code gen.}
@@ -167,7 +166,7 @@ It had to be modified so upon encountring an error, it shifts a `catch` token to
 to determine where to resume parsing the grammar author should handle `catch` explicitly in the grammar.}
 \resumeItem{The grammar file was modified to accept `catch` token in positions where we want to resume parsing and where parsing can be recovered by the surrounding context.}
 \resumeItemListEnd
-\vspace{15pt}
+\vspace{5pt}
 \resumeExperienceHeading{{\textbf{\large{Improving FreeBSD User Emulation of the Armv7 Architecture}}}\href{https://summerofcode.withgoogle.com/programs/2023/projects/nPd0n4mh}{\raisebox{-0.1\height}\faExternalLink}}{June 2023 - Sept 2023}{QEMU.org (GSoC 2023)}
 \resumeItemListStart
 \resumeItem{FreeBSD User is the name of the QEMU submodule for FreeBSD OS.}
@@ -176,11 +175,9 @@ Issuing a syscall in the guest OS works by translating the addresses of the inpu
 call the corresponding syscall on the host, then copy the output parameters, if any, to the QEMU address space.}
 \resumeItem{The goal was to get a simple C++ hello-world program to compile and run inside an armv7 jail hosted on an amd64 machine using clang.}
 \resumeItemListEnd
-\vspace{-13pt}
+\vspace{5pt}
 \resumeSubHeadingListEnd
-\vspace{16pt}
 \section{PROJECTS}
-\vspace{-5pt}
 \resumeSubHeadingListStart
 \resumeProjectHeading{{\textbf{\large{\underline{Lang}}}}\href{https://github.com/Kariiem/Compiler}{\raisebox{-0.1\height}\faExternalLink}}{May 2023}
 \resumeItemListStart
@@ -189,21 +186,21 @@ call the corresponding syscall on the host, then copy the output parameters, if 
 \resumeItem{The front-end is done using flex/bison parser generators to generate a parser in C.}
 \resumeItem{The back-end is divided into several stages: symbol tables constuction, type checking and code generation.}
 \resumeItemListEnd
-\vspace{-13pt}
+\vspace{5pt}
 \resumeProjectHeading{{\textbf{\large{\underline{RSA Algorithm}}}}\href{https://github.com/Kariiem/RSA-Algorithm}{\raisebox{-0.1\height}\faExternalLink}}{June 2022}
 \resumeItemListStart
 \resumeItem{Simple implementation of RSA algorithm in Haskell packaged as a cabal library.}
 \resumeItem{Used the sockets api for communication between sender and receiver.}
 \resumeItem{Implemented chosen cipher text attack.}
 \resumeItemListEnd
-\vspace{-13pt}
+\vspace{5pt}
 \resumeProjectHeading{{\textbf{\large{\underline{VHDL Pipelined-Processor}}}}\href{https://github.com/EssamWisam/Pipelined-AMD-Ryzen-9}{\raisebox{-0.1\height}\faExternalLink}}{Jan 2022}
 \resumeItemListStart
 \resumeItem{A Harvard-architecture 5-stage pipelined processor, implemented in VHDL using Intel's ModelSim.}
 \resumeItem{The processor has a RISC-like instruction set architecture, with 8 word-sized general-purpose registers:R0-R7 and some special purpose registers: program counter(PC) And stack pointer(SP).}
 \resumeItem{The memory address space is 1 MB of 16-bit width and is word addressable. The data bus is 32 bits.}
 \resumeItemListEnd
-\vspace{-13pt}
+\vspace{5pt}
 \resumeProjectHeading{{\textbf{\large{\underline{Search engine}}}}\href{https://github.com/Kariiem/7oksha.com}{\raisebox{-0.1\height}\faExternalLink}}{June 2021}
 \resumeItemListStart
 \resumeItem{Search engine in Java, using Java's multi-threading facilities, namely thread pools.}
@@ -211,9 +208,9 @@ call the corresponding syscall on the host, then copy the output parameters, if 
 \resumeItem{The Web Crawler recursively downloads a specified list of web pages, recurring on each sub link.}
 \resumeItem{The Indexer reads every word, increases it's score then inserts the collected data into an SQL database, ready for query from a simple Web Gui.}
 \resumeItemListEnd
-\vspace{-13pt}
+\vspace{5pt}
 \resumeSubHeadingListEnd
-\vspace{16pt}
+\vspace{5pt}
 \section{TECHNICAL SKILLS}
 \begin{itemize}[leftmargin=0.15in,label={}]
 \small{\item{
@@ -222,6 +219,6 @@ call the corresponding syscall on the host, then copy the output parameters, if 
 \textbf{\normalsize{Technologies/Frameworks:}}{\normalsize{ FreeBSD, Linux, Git}} \\
 }}
 \end{itemize}
-\vspace{-15pt}
+\vspace{5pt}
 
 \end{document}
