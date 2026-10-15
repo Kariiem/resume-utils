@@ -13,23 +13,59 @@ dedication does not override those terms.
 
 ## Build and export
 
-Requirements: native Emacs with Org (tested with `emacs -Q`), Docker, and the
-Font Awesome 7 Free distribution already in `fontawesome/` (ignored by Git).
-Keep its license with the distribution. The template uses these files:
-
-- `fontawesome/otfs/Font Awesome 7 Free-Solid-900.otf`
-- `fontawesome/otfs/Font Awesome 7 Brands-Regular-400.otf`
+Requirements: Bash, native Emacs with Org (tested with `emacs -Q`), Docker
+(accessible to your user), and GNU coreutils (`sha256sum`, `realpath`, `mv -T`).
+For the first font download, also install `curl` and `unzip`.
 
 From this directory:
 
 ```sh
-sha256sum -c fontawesome.sha256  # verify the local font distribution
+./build.sh
+```
+
+This verifies the fonts, builds `resume-tex:local` for `linux/amd64` using
+Docker's build cache, and exports **`resume.pdf`** with native Emacs. It works
+from other directories too when invoked by its path. It does not install host
+packages or change your personal Emacs configuration. Batch export disables
+file-local variables/evaluations and loads the project's backend explicitly.
+Only export trusted Org/LaTeX sources; the sandbox limitations below still apply.
+
+If `fontawesome/` is absent, the script downloads the pinned **Font Awesome Free
+7.2.0 desktop ZIP** (not a tar archive) from:
+
+https://use.fontawesome.com/releases/v7.2.0/fontawesome-free-7.2.0-desktop.zip
+
+The archive's SHA-256 is pinned in `build.sh`; all three extracted OTF files are
+also checked against `fontawesome.sha256` before installation. The distribution,
+including `LICENSE.txt`, is retained in `fontawesome/` (ignored by Git). Temporary
+downloads are removed on exit. Existing font directories are verified and left
+untouched: missing or mismatched fonts, or a missing license, stop the build
+rather than silently replacing local files. Move an unwanted/incomplete directory
+aside and rerun to download a clean copy.
+
+```sh
+./build.sh --setup-only        # fonts + image only; no TeX/PDF export
+./build.sh other/example.org   # export another trusted project CV
+./build.sh --help
+```
+
+`RESUME_TEX_IMAGE` selects the image tag to build and use;
+`RESUME_FONTAWESOME_DIR` selects an absolute font directory to verify or populate.
+Relative CV paths are resolved from your calling directory. Outputs are siblings
+of the selected Org file; the default is always the project's `resume.org`.
+An amd64-capable Docker environment is required (native amd64 or configured
+emulation on another architecture).
+
+The equivalent manual steps, with fonts already installed, remain:
+
+```sh
+sha256sum -c fontawesome.sha256
 # For reproducible architecture as well as dependencies, build on linux/amd64.
 docker build --platform linux/amd64 -t resume-tex:local .
 emacs -Q --batch -l ./resume-tex-config.el -f resume-export-pdf
 ```
 
-The output is **`resume.pdf`**. To export TeX without Docker:
+To export TeX without Docker:
 
 ```sh
 emacs -Q --batch -l ./resume-tex-config.el -f resume-export-tex
@@ -169,7 +205,14 @@ Run regression tests without Docker:
 
 ```sh
 emacs -Q --batch -l tests/export-tests.el -f ert-run-tests-batch-and-exit
+python3 -m unittest discover -s tests -p 'test_build.py' -v
 ```
+
+The build-script tests use temporary fixtures and mock downloads, Docker and
+Emacs; they exercise ZIP extraction, checksum failures, existing-font reuse and
+preservation, environment overrides and command arguments without network access
+or generating a real PDF. They require Bash, coreutils, `unzip` and Python 3's
+standard library.
 
 Integration/repeatability check:
 

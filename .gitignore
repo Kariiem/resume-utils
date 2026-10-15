@@ -9,3 +9,5 @@
 *.toc
 *.synctex.gz
 *.elc
+# Python build-script test bytecode.
+__pycache__/
