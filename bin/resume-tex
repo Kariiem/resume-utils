@@ -13,4 +13,5 @@ exec docker run --rm --network=none --read-only --cap-drop=ALL \
   --user "$(id -u):$(id -g)" --tmpfs /tmp:rw,nosuid,nodev,size=256m \
   --mount "type=bind,source=$root,target=/work" \
   --mount "type=bind,source=$fonts,target=/fontawesome,readonly" \
+  --mount "type=bind,source=$fonts,target=/work/fontawesome,readonly" \
   "${RESUME_TEX_IMAGE:-resume-tex:local}" "$file"

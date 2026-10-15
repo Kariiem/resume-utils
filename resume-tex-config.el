@@ -129,7 +129,9 @@
   (unless (derived-mode-p 'org-mode)
     (find-file (expand-file-name "resume.org" resume-tex-directory)))
   (resume-tex--setup)
-  (org-export-to-file 'resume (expand-file-name "resume.tex" resume-tex-directory)))
+  ;; Resume export never needs to evaluate source blocks on the host.
+  (let ((org-export-use-babel nil))
+    (org-export-to-file 'resume (expand-file-name "resume.tex" resume-tex-directory))))
 
 (defun resume-export-pdf (&optional _async _subtreep _visible-only _body-only _ext-plist)
   "Export to resume.tex and compile resume.pdf in the Docker sandbox."

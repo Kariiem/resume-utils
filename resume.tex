@@ -12,7 +12,7 @@
 \usepackage{multicol}
 \usepackage{graphicx}
 \usepackage{tikz}
-\usepackage{fontawesome7}
+% Icons are loaded directly from the read-only Font Awesome mount.
 
 \RequirePackage{tikz}
 \RequirePackage{xcolor}
@@ -20,24 +20,17 @@
 
 \setlength{\multicolsep}{-3.0pt}
 \setlength{\columnsep}{-1pt}
-\input{glyphtounicode}
+% XeTeX emits Unicode text mappings natively.
 
 
 \usepackage{fontspec}
 
-% Load Font Awesome 7 by NAME via fontconfig (registered at Docker image
-% build time  see the Dockerfile) instead of a hardcoded relative file
-% path. This avoids needing to ship .otf files inside the project folder.
-% If these exact family names don't resolve, run inside the container:
-%   fc-list | grep -i "font awesome 7"
-% and swap in whatever family name strings it actually prints.
-\newfontfamily{\FASolid}{Font Awesome 7 Free Solid}
-\newfontfamily{\FABrands}{Font Awesome 7 Brands}
-
-% Your existing commands will now work perfectly
-% \newcommand{\faPhone}{{\FASolid\symbol{"F095}}}
-% \newcommand{\faEnvelope}{{\FASolid\symbol{"F0E0}}}
-% \newcommand{\faGithub}{{\FABrands\symbol{"F09B}}}
+% Explicit filenames avoid host font installation and fontconfig caches.
+\newfontfamily{\FASolid}[Path=/fontawesome/otfs/]{Font Awesome 7 Free-Solid-900.otf}
+\newfontfamily{\FABrands}[Path=/fontawesome/otfs/]{Font Awesome 7 Brands-Regular-400.otf}
+\newcommand{\faPhone}{{\FASolid\symbol{"F095}}}
+\newcommand{\faEnvelope}{{\FASolid\symbol{"F0E0}}}
+\newcommand{\faGithub}{{\FABrands\symbol{"F09B}}}
 \newcommand{\faLinkedinSquare}{{\FABrands\symbol{"F08C}}}
 \newcommand{\faExternalLink}{{\FASolid\symbol{"F35D}}}
 
@@ -72,7 +65,7 @@
 \titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
 
 % Ensure that generate pdf is machine readable/ATS parsable
-\pdfgentounicode=1
+% No pdfTeX-only \pdfgentounicode primitive under XeTeX.
 
 % ------------------------- Custom commands
 \newcommand{\resumeItem}[1]{\item\small{{#1 \vspace{-2pt}}}}
@@ -130,90 +123,48 @@
 
 
 \begin{document}
-
-% ----------HEADING----------
-
-
 \begin{center}
-  {\Huge \scshape Karim Taha}
-  \\ \vspace{1pt} Cairo,Egypt
-  \\ \vspace{1pt} \small
-  \href{tel:+201015993100}{\raisebox{-0.1\height}\faPhone\underline{+20-1015993100}~}
-  \href{mailto:kariem.taha2.7@gmail.com}{\raisebox{-0.2\height}\faEnvelope\underline{kariem.taha2.7@gmail.com}~}
-  \href{https://www.linkedin.com/in/karim-taha-6927711b8/}{\raisebox{-0.2\height}\faLinkedinSquare\underline{Karim Taha}~}
-  \href{https://github.com/Kariiem}{\raisebox{-0.2\height}\faGithub\underline{Kariiem}~}
-  \vspace{-8pt}
+{\Huge \scshape Karim Taha}\\ \vspace{1pt} Cairo,Egypt\\ \vspace{1pt} \small
+\href{tel:+201015993100}{\raisebox{-0.1\height}\faPhone\underline{+20-1015993100}~}
+\href{mailto:kariem.taha2.7@gmail.com}{\raisebox{-0.2\height}\faEnvelope\underline{kariem.taha2.7@gmail.com}~}
+\href{https://www.linkedin.com/in/karim-taha-6927711b8/}{\raisebox{-0.2\height}\faLinkedinSquare\underline{Karim Taha}~}
+\href{https://github.com/Kariiem}{\raisebox{-0.2\height}\faGithub\underline{Kariiem}~}
+\vspace{-8pt}
 \end{center}
 
-
-% -----------EDUCATION-----------
 \section{EDUCATION}
 \resumeSubHeadingListStart
-\resumeSubheading
-{Cairo University Faculty of Engineering}
-{August 2018 -- July 2023}
-{BSc. Computer Engineering, Grade: Excellent}
-{Cairo, Egypt}
+\resumeSubheading{Cairo University Faculty of Engineering}{August 2018 -- July 2023}{BSc. Computer Engineering, Grade: Excellent}{Cairo, Egypt}
 \resumeSubHeadingListEnd
-
-
-% -----------EXPERIENCE-----------
 \section{EXPERIENCE}
 \vspace{-5pt}
 \resumeSubHeadingListStart
-
-\resumeExperienceHeading
-{{\textbf{\large{Parse error recovery and incrementality for GHC}}\href{https://summerofcode.withgoogle.com/archive/2024/projects/3tNBjwL4}{\raisebox{-0.1\height}\faExternalLink }}}
-{June 2024 - Nov 2024}
-{Haskell.org (GSoC 2024)}
+\resumeExperienceHeading{{\textbf{\large{Parse error recovery and incrementality for GHC}}}\href{https://summerofcode.withgoogle.com/archive/2024/projects/3tNBjwL4}{\raisebox{-0.1\height}\faExternalLink}}{June 2024 - Nov 2024}{Haskell.org (GSoC 2024)}
 \resumeItemListStart
 \resumeItem{GHC (Glasgow Haskell Compiler) is a state-of-the-art Haskell compiler, it's divided into several stages: parser, renamer, typechecker, desugarer and code gen.}
 \resumeItem{GHC's parser is not fault-tolerant, so any parsing error causes the whole compilation pipeline to fail, this affects the programming experience, since it leads to longer modify-compile-correct cycles.}
 \resumeItem{The project included two parts, the happy parser generator, and GHC's grammar file (happy user).}
 \resumeItem{A form of recovery, namely resumable parsing was implemented in happy parser generator.
-  It had to be modified so upon encountring an error, it shifts a `catch` token to the parsing stack,
-  to determine where to resume parsing the grammar author should handle `catch` explicitly in the grammar.}
+It had to be modified so upon encountring an error, it shifts a `catch` token to the parsing stack,
+to determine where to resume parsing the grammar author should handle `catch` explicitly in the grammar.}
 \resumeItem{The grammar file was modified to accept `catch` token in positions where we want to resume parsing and where parsing can be recovered by the surrounding context.}
 \resumeItemListEnd
 \vspace{15pt}
-
-\resumeExperienceHeading
-{{\textbf{\large{Improving FreeBSD User Emulation of the Armv7 Architecture}}\href{https://summerofcode.withgoogle.com/programs/2023/projects/nPd0n4mh}{\raisebox{-0.1\height}\faExternalLink }}}
-{June 2023 - Sept 2023}
-{QEMU.org (GSoC 2023)}
+\resumeExperienceHeading{{\textbf{\large{Improving FreeBSD User Emulation of the Armv7 Architecture}}}\href{https://summerofcode.withgoogle.com/programs/2023/projects/nPd0n4mh}{\raisebox{-0.1\height}\faExternalLink}}{June 2023 - Sept 2023}{QEMU.org (GSoC 2023)}
 \resumeItemListStart
 \resumeItem{FreeBSD User is the name of the QEMU submodule for FreeBSD OS.}
 \resumeItem{To improve the Armv7 emulation, a set of syscalls needed to be implemented in FreeBSD User.
-  Issuing a syscall in the guest OS works by translating the addresses of the input parameters from the QEMU address space to the host address space,
-  call the corresponding syscall on the host, then copy the output parameters, if any, to the QEMU address space.}
+Issuing a syscall in the guest OS works by translating the addresses of the input parameters from the QEMU address space to the host address space,
+call the corresponding syscall on the host, then copy the output parameters, if any, to the QEMU address space.}
 \resumeItem{The goal was to get a simple C++ hello-world program to compile and run inside an armv7 jail hosted on an amd64 machine using clang.}
 \resumeItemListEnd
 \vspace{-13pt}
-
 \resumeSubHeadingListEnd
 \vspace{16pt}
-
-% -----------PROJECTS-----------
 \section{PROJECTS}
 \vspace{-5pt}
 \resumeSubHeadingListStart
-
-
-\disable{
-  \resumeProjectHeading
-  {{\textbf{\large{\underline{Botiverse}}}\href{https://github.com/TheBotiverse/Botiverse}{\raisebox{-0.1\height}\faExternalLink }}}
-  {July 2023}
-  \resumeItemListStart
-  \resumeItem{An open source python package for building chatbots.}
-  \resumeItem{Implemented and tested the Theorizer submodule, a question-generation model.}
-  \resumeItem{Used special preprocessing for extracting new features besides the question and the answer, namely the clue and the style.}
-  \resumeItemListEnd
-  \vspace{-13pt}
-}
-
-\resumeProjectHeading
-{{\textbf{\large{\underline{Lang}}}\href{https://github.com/Kariiem/Compiler}{\raisebox{-0.1\height}\faExternalLink}}}
-{May 2023}
+\resumeProjectHeading{{\textbf{\large{\underline{Lang}}}}\href{https://github.com/Kariiem/Compiler}{\raisebox{-0.1\height}\faExternalLink}}{May 2023}
 \resumeItemListStart
 \resumeItem{A compiler for a statically typed, expression based programming language, written in C.}
 \resumeItem{The implementation follows the literature standards, by dividing the compiler into a front-end and a back-end.}
@@ -221,40 +172,21 @@
 \resumeItem{The back-end is divided into several stages: symbol tables constuction, type checking and code generation.}
 \resumeItemListEnd
 \vspace{-13pt}
-
-\resumeProjectHeading
-{{\textbf{\large{\underline{RSA Algorithm}}}\href{https://github.com/Kariiem/RSA-Algorithm}{\raisebox{-0.1\height}\faExternalLink }}}
-{June 2022}
+\resumeProjectHeading{{\textbf{\large{\underline{RSA Algorithm}}}}\href{https://github.com/Kariiem/RSA-Algorithm}{\raisebox{-0.1\height}\faExternalLink}}{June 2022}
 \resumeItemListStart
 \resumeItem{Simple implementation of RSA algorithm in Haskell packaged as a cabal library.}
 \resumeItem{Used the sockets api for communication between sender and receiver.}
 \resumeItem{Implemented chosen cipher text attack.}
 \resumeItemListEnd
 \vspace{-13pt}
-
-\resumeProjectHeading {{\textbf{\large{\underline{VHDL Pipelined-Processor}}} \href{https://github.com/EssamWisam/Pipelined-AMD-Ryzen-9}{\raisebox{-0.1\height}\faExternalLink}}}
-{Jan 2022}
+\resumeProjectHeading{{\textbf{\large{\underline{VHDL Pipelined-Processor}}}}\href{https://github.com/EssamWisam/Pipelined-AMD-Ryzen-9}{\raisebox{-0.1\height}\faExternalLink}}{Jan 2022}
 \resumeItemListStart
 \resumeItem{A Harvard-architecture 5-stage pipelined processor, implemented in VHDL using Intel's ModelSim.}
 \resumeItem{The processor has a RISC-like instruction set architecture, with 8 word-sized general-purpose registers:R0-R7 and some special purpose registers: program counter(PC) And stack pointer(SP).}
 \resumeItem{The memory address space is 1 MB of 16-bit width and is word addressable. The data bus is 32 bits.}
-\resumeItemListEnd \vspace{-13pt}
-
-\disable{
-  \resumeProjectHeading {{\textbf{\large{\underline{SE-Project-CMP-Tumbler}}}\href{https://github.com/SE-Project-CMP-Tumbler/SE-Project-CMP-Testing}{\raisebox{-0.1\height}\faExternalLink}}}
-  {Jan 2022}
-  \resumeItemListStart
-  \resumeItem{Testing environment for a tumbler clone.}
-  \resumeItem{Web app was tested using cypress.}
-  \resumeItem{Native Android app was tested using Appium Java.}
-  \resumeItem{Flutter Android app was tested using Appium-flutter.}
-  \resumeItemListEnd
-  \vspace{-13pt}
-}
-
-\resumeProjectHeading
-{{\textbf{\large{\underline{Search engine}}}\href{https://github.com/Kariiem/7oksha.com}{\raisebox{-0.1\height}\faExternalLink}}}
-{June 2021}
+\resumeItemListEnd
+\vspace{-13pt}
+\resumeProjectHeading{{\textbf{\large{\underline{Search engine}}}}\href{https://github.com/Kariiem/7oksha.com}{\raisebox{-0.1\height}\faExternalLink}}{June 2021}
 \resumeItemListStart
 \resumeItem{Search engine in Java, using Java's multi-threading facilities, namely thread pools.}
 \resumeItem{The Search engine is divided into two parts the web crawler and the indexer.}
@@ -262,20 +194,15 @@
 \resumeItem{The Indexer reads every word, increases it's score then inserts the collected data into an SQL database, ready for query from a simple Web Gui.}
 \resumeItemListEnd
 \vspace{-13pt}
-
 \resumeSubHeadingListEnd
 \vspace{16pt}
-
-% -----------PROGRAMMING SKILLS-----------
-
 \section{TECHNICAL SKILLS}
-\begin{itemize}[leftmargin=0.15in, label={}]
-  \small{\item{
-      \textbf{\normalsize{Languages:}}{{ \normalsize{ C/C++, Haskell, Python, javaScript/Typescript, SQL} \\
-          \textbf{\normalsize{Developer Tools:}}{ \normalsize{Emacs, Neovim, VS Code, GitHub}} \\
-          \textbf{\normalsize{Technologies/Frameworks:}}{\normalsize{ FreeBSD, Linux, Git}} \\
-        }}
-    }}
+\begin{itemize}[leftmargin=0.15in,label={}]
+\small{\item{
+\textbf{\normalsize{Languages:}}{\normalsize{ C/C++, Haskell, Python, javaScript/Typescript, SQL}} \\
+\textbf{\normalsize{Developer Tools:}}{\normalsize{ Emacs, Neovim, VS Code, GitHub}} \\
+\textbf{\normalsize{Technologies/Frameworks:}}{\normalsize{ FreeBSD, Linux, Git}} \\
+}}
 \end{itemize}
 \vspace{-15pt}
 

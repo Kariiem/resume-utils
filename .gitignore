@@ -1,1 +1,9 @@
 /fontawesome/
+# TeX intermediates (resume.tex and resume.pdf are intentional tracked outputs).
+*.aux
+*.log
+*.out
+*.xdv
+*.toc
+*.synctex.gz
+*.elc
