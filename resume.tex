@@ -125,7 +125,7 @@
 \begin{document}
 \begin{center}
 {\Huge \scshape Karim Taha}\\ \vspace{1pt} Cairo,Egypt\\ \vspace{1pt} \small
-\href{tel:+201015993100}{\raisebox{-0.1\height}\faPhone\underline{+20-1015993100}~}
+\href{tel:+201115643549}{\raisebox{-0.1\height}\faPhone\underline{+20-1115643549}~}
 \href{mailto:kariem.taha2.7@gmail.com}{\raisebox{-0.2\height}\faEnvelope\underline{kariem.taha2.7@gmail.com}~}
 \href{https://www.linkedin.com/in/karim-taha-6927711b8/}{\raisebox{-0.2\height}\faLinkedinSquare\underline{Karim Taha}~}
 \href{https://github.com/Kariiem}{\raisebox{-0.2\height}\faGithub\underline{Kariiem}~}
@@ -139,6 +139,24 @@
 \section{EXPERIENCE}
 \vspace{-5pt}
 \resumeSubHeadingListStart
+\resumeExperienceHeading{{\textbf{\large{Backend Engineer (Elixir / OTP, CQRS/ES)}}}}{August 2025 - Present}{Sonnen}
+\resumeItemListStart
+\resumeItem{Designed and extended CQRS/Event-Sourcing workflows using Commanded:
+introduced new commands/events and updated projectors and process managers to
+support cross-service domain logic.}
+\resumeItem{Resolved a production aggregate state bug by redesigning event emission
+(two-event sequencing) to correctly handle timeouts and prevent incorrect
+state replacement involving Oban jobs.}
+\resumeItem{Re-architected JSON logging pipeline to align with OTP 26+ logger
+handler,filter,formatter model, adding structured metadata for Phoenix/Plug
+requests.}
+\resumeItem{Diagnosed and eliminated shutdown race conditions between dynamic supervisors
+and PubSub processes.}
+\resumeItem{Designed and implemented a reusable RabbitMQ client library with explicit
+producer/consumer behaviours and blocked-connection handling via
+Phoenix.PubSub state broadcasting.}
+\resumeItemListEnd
+\vspace{15pt}
 \resumeExperienceHeading{{\textbf{\large{Parse error recovery and incrementality for GHC}}}\href{https://summerofcode.withgoogle.com/archive/2024/projects/3tNBjwL4}{\raisebox{-0.1\height}\faExternalLink}}{June 2024 - Nov 2024}{Haskell.org (GSoC 2024)}
 \resumeItemListStart
 \resumeItem{GHC (Glasgow Haskell Compiler) is a state-of-the-art Haskell compiler, it's divided into several stages: parser, renamer, typechecker, desugarer and code gen.}
