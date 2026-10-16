@@ -1,47 +1,39 @@
 # Résumé in Typst
 
-Edit **`resume.typ`**, then compile with [Typst](https://typst.app/):
+**`resume.typ` is the source of truth** for both content and layout.
 
 ```sh
-typst compile resume.typ                 # creates resume.pdf
-typst watch resume.typ                   # rebuilds while editing
+./setup-icons.sh                 # once: download/verify the five SVG icons
+typst compile resume.typ         # creates resume.pdf
+typst watch resume.typ           # rebuilds while editing
 ```
 
-Tested with Typst 0.15.1. No TeX, Emacs, Docker, installed fonts, or Typst
-packages are needed. Sections may span pages; individual entries stay together.
+Requires [Typst](https://typst.app/) (tested with 0.15.1). It uses bundled fonts,
+with no package downloads. Sections may span pages; individual entries stay
+together.
 
 ## Icons
 
-`resume-icon-in-use.typ` loads five SVG icons from a local Font Awesome Free
-7.2.0 desktop distribution. Download and extract it once:
+`resume-icon-in-use.typ` reads five SVGs from `fontawesome/`; no inline SVGs.
+Setup requires Bash, curl, unzip, and GNU coreutils. It verifies the Font Awesome
+Free 7.2.0 archive and extracted assets by SHA-256, keeps `LICENSE.txt`, and never
+repairs or replaces an existing directory silently. No font installation is needed.
+
+## Tests
+
+Requires Python 3 and Poppler (`pdftotext`, `pdfinfo`), plus the setup above:
 
 ```sh
-curl -fL https://use.fontawesome.com/releases/v7.2.0/fontawesome-free-7.2.0-desktop.zip -o /tmp/fontawesome.zip
-unzip /tmp/fontawesome.zip -d /tmp
-mv /tmp/fontawesome-free-7.2.0-desktop ./fontawesome
+python3 -m unittest discover -s tests -v
 ```
 
-Skip this setup if `fontawesome/` already exists. Keep its `LICENSE.txt`.
-The directory is ignored by Git; the résumé contains no inline SVGs.
+Checks cover rendered content, links, pagination, entry integrity, clipping,
+source order, and safe icon reuse—not pixel matching.
 
-## Checks
+## Legacy implementation and license
 
-With Python 3, Typst, and Poppler (`pdftotext`, `pdfinfo`) installed:
-
-```sh
-python3 -m unittest discover -s tests -p 'test_typst.py' -v
-```
-
-Checks cover content, links, page format, clipping, entry integrity, and source
-order—not pixel matching. The content follows `resume.org` / `resume.tex`;
-Typst is edited directly, so changes are not automatically synchronized.
-
-## TeX version
-
-The **`tex-implementation`** branch preserves the Org → LaTeX workflow and its
-setup documentation. Older TeX tooling remains in this branch's history/files.
-
-## License
+The **`tex-implementation`** branch contains the separate Org/Emacs/Docker/TeX
+workflow. None of those tools are needed on `main`.
 
 Original contributions use the [Unlicense](LICENSE). Font Awesome icons are
-CC BY 4.0; upstream template material retains its own license.
+[CC BY 4.0](https://fontawesome.com/license/free).

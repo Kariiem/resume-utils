@@ -1,4 +1,4 @@
-"""Content and coarse layout checks; requires Typst and Poppler, not TeX."""
+"""Content and coarse layout checks; requires Typst and Poppler."""
 from pathlib import Path
 import re
 import shutil
@@ -19,61 +19,46 @@ def normalize(text):
     return " ".join(text.split())
 
 
-def org_expectations():
-    """Read this CV's simple headings/properties/bullets, not a general exporter."""
-    sections, contacts, urls, excluded = {}, [], set(), []
-    section, skip, bullet = None, None, []
+def source_expectations():
+    """Read this résumé's literal calls/bullets, not general Typst syntax.
 
-    def flush():
-        if bullet:
-            sections[section].append(" ".join(bullet))
-            bullet.clear()
-
-    for line in (ROOT / "resume.org").read_text().splitlines():
-        heading = re.match(r"^(\*+) (.+)$", line)
-        if heading:
-            flush()
-            level, title = len(heading[1]), heading[2]
-            if skip is not None and level <= skip:
-                skip = None
-            if title.startswith("COMMENT "):
-                skip = level if skip is None else skip
-                excluded.append(title.removeprefix("COMMENT "))
-            elif skip is None:
-                if level == 1:
-                    section = title
-                    sections[section] = []
-                else:
-                    sections[section].append(title)
-        if skip is not None:
-            continue
-        keyword = re.match(r"^#\+RESUME_(\w+):\s*(.*)$", line)
-        if keyword:
-            key, value = keyword.groups()
-            if key in ("NAME", "LOCATION", "PHONE", "EMAIL", "GITHUB_LABEL"):
-                contacts.append(value)
-            if key in ("LINKEDIN", "GITHUB"):
-                urls.add(value)
-            if key == "EMAIL":
-                urls.add("mailto:" + value)
-            if key == "PHONE_URI":
-                urls.add("tel:" + value)
-        prop = re.match(r"^:([A-Z_]+):\s*(.*)$", line)
-        if prop:
-            key, value = prop.groups()
-            if key in ("DATE", "QUALIFICATION", "LOCATION", "ORGANIZATION", "VALUE"):
-                sections[section].append(value)
-            if key == "URL":
-                urls.add(value)
-        if line.startswith("- "):
-            flush()
-            bullet.append(line[2:])
-        elif bullet and line.startswith("  "):
-            bullet.append(line.strip())
-        elif bullet:
-            flush()
-    flush()
-    return sections, contacts, urls, excluded
+    Keep this small test reader in sync if the source's structure changes.
+    Expectations come from Typst itself; there is no parallel content document.
+    """
+    source = (ROOT / "resume.typ").read_text()
+    parts = re.split(r'#section\("([^"]+)"\)\[', source)
+    sections = {}
+    for title, body in zip(parts[1::2], parts[2::2]):
+        entries = []
+        if "#entry(" in body:
+            for entry in body.split("#entry(")[1:]:
+                header, content = entry.split(")[", 1)
+                fields = re.findall(r'"([^"]+)"', header)
+                fragments = [field for field in fields if not field.startswith("https://")]
+                organization = re.search(r"organization:\s*\[([^\]]+)\]", header)
+                if organization:
+                    fragments.append(organization[1])
+                bullets = re.findall(r"^\s*- (.+)$", content, re.M)
+                if not bullets:
+                    raise ValueError(f"No bullets found in {fragments[0]}")
+                entries.append(fragments + bullets)
+        else:
+            # Education's grid cells, or the three literal skill rows.
+            cells = re.findall(r"\[([^\[\]\n]+)\]", body)
+            if cells:
+                entries.append(cells)
+            else:
+                for label, value in re.findall(r"^\s*\*([^*\n]+)\* ([^\n]+)", body, re.M):
+                    entries.append([label + " " + value.rstrip().removesuffix("\\").rstrip()])
+        if not entries:
+            raise ValueError(f"No entries found in {title}")
+        sections[title] = entries
+    contacts = re.findall(
+        r'#contact\(\s*"[^"]+",\s*"[^"]+",\s*"([^"]+)",?\s*\)', source)
+    contacts += re.findall(r'smallcaps\[([^\]]+)\]', parts[0])
+    contacts += re.findall(r'#text\([^\n)]*\)\[([^\]\n]+)\]', parts[0])
+    urls = set(re.findall(r'"((?:https://|mailto:|tel:)[^"]+)"', source))
+    return sections, contacts, urls
 
 
 class TypstTests(unittest.TestCase):
@@ -85,7 +70,7 @@ class TypstTests(unittest.TestCase):
         temporary = tempfile.TemporaryDirectory()
         cls.addClassCleanup(temporary.cleanup)
         directory = Path(temporary.name)
-        # Copy only the Typst files and five external icons; no TeX or font files.
+        # Build with only the source files and the five external icons.
         for name in ("resume.typ", "resume-icon-in-use.typ"):
             shutil.copyfile(ROOT / name, directory / name)
         for name in ("solid/phone", "solid/envelope", "solid/up-right-from-square",
@@ -109,16 +94,15 @@ class TypstTests(unittest.TestCase):
         links = subprocess.check_output(["pdfinfo", "-url", str(pdf)], text=True)
         cls.urls = {line.split(maxsplit=2)[2] for line in links.splitlines()[1:]
                     if len(line.split(maxsplit=2)) == 3}
-        cls.sections, cls.contacts, cls.expected_urls, cls.excluded = org_expectations()
+        cls.sections, cls.contacts, cls.expected_urls = source_expectations()
 
-    def test_all_active_content_and_no_disabled_projects(self):
+    def test_content_is_rendered(self):
         fragments = self.contacts + list(self.sections)
-        fragments += [item for items in self.sections.values() for item in items]
+        fragments += [fragment for entries in self.sections.values()
+                      for entry in entries for fragment in entry]
         for fragment in fragments:
             with self.subTest(fragment=fragment):
                 self.assertIn(normalize(fragment), self.all_text)
-        for title in self.excluded:
-            self.assertNotIn(normalize(title), self.all_text)
 
     def test_contact_and_project_link_annotations(self):
         self.assertEqual(self.urls, self.expected_urls)
@@ -128,15 +112,8 @@ class TypstTests(unittest.TestCase):
         self.assertEqual(positions, sorted(positions))
 
     def test_entries_stay_together_but_sections_may_span_pages(self):
-        titles = set(re.findall(r"^\*\* (.+)$", (ROOT / "resume.org").read_text(), re.M))
         previous_page = 0
-        for items in self.sections.values():
-            entries = []
-            for item in items:
-                if item in titles:
-                    entries.append([item])
-                else:
-                    entries[-1].append(item)
+        for entries in self.sections.values():
             for entry in entries:
                 title = entry[0]
                 pattern = r"(?<!\w)" + re.escape(normalize(title)) + r"(?!\w)"
